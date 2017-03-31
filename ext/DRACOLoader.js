@@ -14,7 +14,7 @@
 //
 'use strict';
 
-module.exports = function(THREE) {
+module.exports = function(THREE, DRACOModule) {
 
 var DRACOLoader = function(manager) {
     this.manager = (manager !== undefined) ? manager :

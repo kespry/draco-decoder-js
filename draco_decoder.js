@@ -23,3 +23,5 @@ var Ra=[ql,Jj,Oh,Wh,dg,lj,hf,cd,Cg,Hh,Jh,ji,Ng,ch,Pe,Uh,Sg,ql,ql,ql,ql,ql,ql,ql,
 
   return DracoModule;
 };
+
+module.exports = DracoModule;

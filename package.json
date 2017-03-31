@@ -1,0 +1,25 @@
+{
+  "name": "draco-decoder",
+  "version": "1.0.20170330",
+  "description": "Javascript decoders for draco-encoded meshes",
+  "main": "ext/draco_decoder.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kespry/draco-decoder.git"
+  },
+  "keywords": [
+    "three",
+    "3d",
+    "draco",
+    "mesh"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kespry/draco-decoder/issues"
+  },
+  "homepage": "https://github.com/kespry/draco-decoder#readme"
+}

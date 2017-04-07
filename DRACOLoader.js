@@ -77,7 +77,7 @@ DRACOLoader.prototype = {
 
     convertDracoGeometryTo3JS: function(wrapper, geometryType, buffer) {
         const dracoDecoder = DRACOLoader.getDecoder();
-        let dracoGeometry;
+        var dracoGeometry;
         const start_time = performance.now();
         if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
           dracoGeometry = wrapper.DecodeMeshFromBuffer(buffer);
@@ -89,10 +89,10 @@ DRACOLoader.prototype = {
         /*
          * Example on how to retrieve mesh and attributes.
          */
-        let numFaces, numPoints;
-        let numVertexCoordinates, numTextureCoordinates, numAttributes;
+        var numFaces, numPoints;
+        var numVertexCoordinates, numTextureCoordinates, numAttributes;
         // For output basic geometry information.
-        let geometryInfoStr;
+        var geometryInfoStr;
         if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
           numFaces = dracoGeometry.num_faces();
           if (this.verbosity > 0) {
@@ -128,7 +128,7 @@ DRACOLoader.prototype = {
         // Get color attributes if exists.
         const colorAttId = wrapper.GetAttributeId(dracoGeometry,
                                                   dracoDecoder.COLOR);
-        let colAttributeData;
+        var colAttributeData;
         if (colorAttId != -1) {
           if (this.verbosity > 0) {
             console.log('Loaded color attribute.');
@@ -142,7 +142,7 @@ DRACOLoader.prototype = {
         // Get normal attributes if exists.
         const normalAttId =
             wrapper.GetAttributeId(dracoGeometry, dracoDecoder.NORMAL);
-        let norAttributeData;
+        var norAttributeData;
         if (normalAttId != -1) {
           if (this.verbosity > 0) {
             console.log('Loaded normal attribute.');
@@ -156,7 +156,7 @@ DRACOLoader.prototype = {
         // Get texture coord attributes if exists.
         const texCoordAttId =
             wrapper.GetAttributeId(dracoGeometry, dracoDecoder.TEX_COORD);
-        let textCoordAttributeData;
+        var textCoordAttributeData;
         if (texCoordAttId != -1) {
           if (this.verbosity > 0) {
             console.log('Loaded texture coordinate attribute.');
@@ -179,7 +179,7 @@ DRACOLoader.prototype = {
             colors: new Float32Array(numVertexCoordinates)
         };
 
-        for (let i = 0; i < numVertexCoordinates; i += 3) {
+        for (var i = 0; i < numVertexCoordinates; i += 3) {
             geometryBuffer.vertices[i] = posAttributeData.GetValue(i);
             geometryBuffer.vertices[i + 1] = posAttributeData.GetValue(i + 1);
             geometryBuffer.vertices[i + 2] = posAttributeData.GetValue(i + 2);
@@ -207,7 +207,7 @@ DRACOLoader.prototype = {
 
         // Add texture coordinates.
         if (texCoordAttId != -1) {
-          for (let i = 0; i < numTextureCoordinates; i += 2) {
+          for (var i = 0; i < numTextureCoordinates; i += 2) {
             geometryBuffer.uvs[i] = textCoordAttributeData.GetValue(i);
             geometryBuffer.uvs[i + 1] = textCoordAttributeData.GetValue(i + 1);
           }
@@ -224,7 +224,7 @@ DRACOLoader.prototype = {
         // For mesh, we need to generate the faces.
         if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
           const ia = new dracoDecoder.DracoInt32Array();
-          for (let i = 0; i < numFaces; ++i) {
+          for (var i = 0; i < numFaces; ++i) {
             wrapper.GetFaceFromMesh(dracoGeometry, i, ia);
             const index = i * 3;
             geometryBuffer.indices[index] = ia.GetValue(0);
@@ -275,7 +275,7 @@ DRACOLoader.prototype = {
  * copies of the decoder is expensive.
  */
 DRACOLoader.getDecoder = (function() {
-    let decoder;
+    var decoder;
 
     return function() {
         if (typeof DracoModule === 'undefined') {

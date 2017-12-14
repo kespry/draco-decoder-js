@@ -1,3 +1,7 @@
+var THREE = require("three");
+
+/* eslint-disable */
+
 // Copyright 2016 The Draco Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +16,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-'use strict';
 
 // |dracoPath| sets the path for the Draco decoder source files. The default
 // path is "./". If |dracoDecoderType|.type is set to "js", then DRACOLoader
@@ -349,43 +352,43 @@ THREE.DRACOLoader.prototype = {
 // This function loads a JavaScript file and adds it to the page. "path"
 // is the path to the JavaScript file. "onLoadFunc" is the function to be
 // called when the JavaScript file has been loaded.
-THREE.DRACOLoader.loadJavaScriptFile = function(path, onLoadFunc,
-    dracoDecoder) {
-  var previous_decoder_script = document.getElementById("decoder_script");
-  if (previous_decoder_script !== null) {
-    return;
-  }
-  var head = document.getElementsByTagName('head')[0];
-  var element = document.createElement('script');
-  element.id = "decoder_script";
-  element.type = 'text/javascript';
-  element.src = path;
-  if (onLoadFunc !== null) {
-    element.onload = onLoadFunc(dracoDecoder);
-  } else {
-    element.onload = function(dracoDecoder) {
-      THREE.DRACOLoader.timeLoaded = performance.now();
-    };
-  }
-  head.appendChild(element);
-}
+// THREE.DRACOLoader.loadJavaScriptFile = function(path, onLoadFunc,
+//     dracoDecoder) {
+//   var previous_decoder_script = document.getElementById("decoder_script");
+//   if (previous_decoder_script !== null) {
+//     return;
+//   }
+//   var head = document.getElementsByTagName('head')[0];
+//   var element = document.createElement('script');
+//   element.id = "decoder_script";
+//   element.type = 'text/javascript';
+//   element.src = path;
+//   if (onLoadFunc !== null) {
+//     element.onload = onLoadFunc(dracoDecoder);
+//   } else {
+//     element.onload = function(dracoDecoder) {
+//       THREE.DRACOLoader.timeLoaded = performance.now();
+//     };
+//   }
+//   head.appendChild(element);
+// }
 
-THREE.DRACOLoader.loadWebAssemblyDecoder = function(dracoDecoder) {
-  THREE.DRACOLoader.dracoDecoderType['wasmBinaryFile'] =
-      dracoDecoder.dracoSrcPath + 'draco_decoder.wasm';
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', dracoDecoder.dracoSrcPath + 'draco_decoder.wasm', true);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function() {
-    // draco_wasm_wrapper.js must be loaded before DracoDecoderModule is
-    // created. The object passed into DracoDecoderModule() must contain a
-    // property with the name of wasmBinary and the value must be an
-    // ArrayBuffer containing the contents of the .wasm file.
-    THREE.DRACOLoader.dracoDecoderType['wasmBinary'] = xhr.response;
-    THREE.DRACOLoader.timeLoaded = performance.now();
-  };
-  xhr.send(null)
-}
+// THREE.DRACOLoader.loadWebAssemblyDecoder = function(dracoDecoder) {
+//   THREE.DRACOLoader.dracoDecoderType['wasmBinaryFile'] =
+//       dracoDecoder.dracoSrcPath + 'draco_decoder.wasm';
+//   var xhr = new XMLHttpRequest();
+//   xhr.open('GET', dracoDecoder.dracoSrcPath + 'draco_decoder.wasm', true);
+//   xhr.responseType = 'arraybuffer';
+//   xhr.onload = function() {
+//     // draco_wasm_wrapper.js must be loaded before DracoDecoderModule is
+//     // created. The object passed into DracoDecoderModule() must contain a
+//     // property with the name of wasmBinary and the value must be an
+//     // ArrayBuffer containing the contents of the .wasm file.
+//     THREE.DRACOLoader.dracoDecoderType['wasmBinary'] = xhr.response;
+//     THREE.DRACOLoader.timeLoaded = performance.now();
+//   };
+//   xhr.send(null)
+// }
 
 // This function will test if the browser has support for WebAssembly. If
 // it does it will download the WebAssembly Draco decoder, if not it will
@@ -394,14 +397,20 @@ THREE.DRACOLoader.loadDracoDecoder = function(dracoDecoder) {
   if (typeof WebAssembly !== 'object' ||
       THREE.DRACOLoader.dracoDecoderType.type === 'js') {
     // No WebAssembly support
-    THREE.DRACOLoader.loadJavaScriptFile(dracoDecoder.dracoSrcPath +
-        'draco_decoder.js', null, dracoDecoder);
+    require(["draco-decoder/draco_decoder.js"], function(DracoDecoderModule) {
+      window.DracoDecoderModule = DracoDecoderModule;
+    });
   } else {
-    THREE.DRACOLoader.loadJavaScriptFile(dracoDecoder.dracoSrcPath +
-        'draco_wasm_wrapper.js',
-        function (dracoDecoder) {
-          THREE.DRACOLoader.loadWebAssemblyDecoder(dracoDecoder);
-        }, dracoDecoder);
+    require(["draco-decoder/draco_wasm_wrapper.js", "buffer!draco-decoder/draco_decoder.wasm"], function(DracoDecoderModule, wasmBinary) {
+      window.DracoDecoderModule = DracoDecoderModule;
+      THREE.DRACOLoader.dracoDecoderType['wasmBinary'] = wasmBinary;
+      THREE.DRACOLoader.timeLoaded = performance.now();
+    });
+    // THREE.DRACOLoader.loadJavaScriptFile(dracoDecoder.dracoSrcPath +
+    //     'draco_wasm_wrapper.js',
+    //     function (dracoDecoder) {
+    //       THREE.DRACOLoader.loadWebAssemblyDecoder(dracoDecoder);
+    //     }, dracoDecoder);
   }
 }
 
@@ -474,3 +483,5 @@ THREE.DRACOLoader.releaseDecoderModule = function() {
     THREE.DRACOLoader.dracoDecoderType = {};
   }
 }
+
+module.exports = THREE.DRACOLoader;
